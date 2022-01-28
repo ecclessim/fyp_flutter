@@ -1,6 +1,6 @@
 # fyp_flutter
 
-A new Flutter project.
+MomoManager - A portfolio allocation app using DRL-FinRL and PyPfOpt to perform portfolio allocation strategies.
 
 ## Attribution
 
