@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_flutter/helper_screen/company_info_row.dart';
+import 'package:fyp_flutter/helper_screen/helper_methods.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CompanyInfoWidget extends StatelessWidget {
@@ -7,7 +8,7 @@ class CompanyInfoWidget extends StatelessWidget {
   final avgVolume;
   final country;
   final currentPrice;
-  final divRate;
+  final yieldValue;
   final divYield;
   final forwardPE;
   final longSummary;
@@ -25,7 +26,7 @@ class CompanyInfoWidget extends StatelessWidget {
     this.avgVolume,
     this.country,
     this.currentPrice,
-    this.divRate,
+    this.yieldValue,
     this.divYield,
     this.forwardPE,
     this.longSummary,
@@ -75,8 +76,8 @@ class CompanyInfoWidget extends StatelessWidget {
             child: CompanyInfoRowWidget(
               row1Title: "Div. Yield:",
               row1Value: "$divYield",
-              row2Title: "Div. Rate:",
-              row2Value: "$divRate",
+              row2Title: "Yield:",
+              row2Value: "$yieldValue",
             ),
           ),
           Padding(

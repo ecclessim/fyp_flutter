@@ -13,19 +13,19 @@ class StockRecordsScreen extends StatefulWidget {
 
 class _StockRecordsScreenState extends State<StockRecordsScreen> {
   List<dynamic> stockRecords = [];
-  double averageSharePrice = 0.0;
+  // double averageSharePrice = 0.0;
 
   @override
   void initState() {
     super.initState();
-    FireStoreRepo()
-        .getStockRecords(widget.currentPortfolio, widget.selectedTicker)
-        .then((value) {
-      setState(() {
-        stockRecords = value;
-        averageSharePrice = getAvgSharePrice(stockRecords);
-      });
-    });
+    // FireStoreRepo()
+    //     .getStockRecords(widget.currentPortfolio, widget.selectedTicker)
+    //     .then((value) {
+    //   setState(() {
+    //     stockRecords = value;
+    //     averageSharePrice = getAvgSharePrice(stockRecords);
+    //   });
+    // });
   }
 
   double getAvgSharePrice(List<dynamic> stockRecords) {
@@ -179,19 +179,6 @@ class _StockRecordsScreenState extends State<StockRecordsScreen> {
                   },
                   itemCount: stockRecords.length,
                   shrinkWrap: true),
-              // Padding(
-              //   padding: const EdgeInsets.only(top: 12.0),
-              //   child: Container(
-              //     height: 300,
-              //     decoration: BoxDecoration(
-              //       borderRadius: BorderRadius.circular(15),
-              //       color: Colors.amber,
-              //     ),
-              //     child: Center(
-              //       child: Text("$averageSharePrice"),
-              //     ),
-              //   ),
-              // ),
             ]))),
       ),
     );

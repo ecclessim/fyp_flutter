@@ -22,6 +22,8 @@ class _SearchScreenState extends State<SearchScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController tickerController = new TextEditingController();
   String ticker = "";
+  String quoteType = "";
+  Object response = {};
   String _searchTitle = "Search";
   String _searchSubtitle = "Search for stocks";
   String logoUrl = "default";
@@ -30,7 +32,7 @@ class _SearchScreenState extends State<SearchScreen> {
   var avgVolume = 0;
   var country = "-";
   var currentPrice = 0.0;
-  double? divRate;
+  double? yieldValue;
   double? divYield;
   var forwardPE = 0.0;
   var longSummary = "-";
@@ -47,6 +49,24 @@ class _SearchScreenState extends State<SearchScreen> {
   String decomposedAvgVol = "0";
   double dailyChange = 0;
   double dailyPctChange = 0.0;
+  Object tickerInfo = {};
+
+  Widget getTickerWidget(String quoteType, var object) {
+    switch (quoteType) {
+      case "EQUITY":
+        print("getTickerWidget: => RECEIVED $object");
+        print("${object.logoUrl}");
+        return Container();
+      case "ETF":
+        print("getTickerWidget: => RECEIVED $object");
+        return Container();
+      case "CRYPTOCURRENCY":
+        print("getTickerWidget: => RECEIVED $object");
+        return Container();
+      default:
+        return Container();
+    }
+  }
 
   Future _callCompanyInfoApi(ticker) async {
     if (_formKey.currentState!.validate()) {
@@ -61,7 +81,7 @@ class _SearchScreenState extends State<SearchScreen> {
               avgVolume = value.avgVolume as int;
               country = value.country;
               currentPrice = value.currentPrice as double;
-              divRate = value.divRate as double;
+              yieldValue = value.yield as double;
               divYield = value.divYield as double;
               forwardPE = value.forwardPE as double;
               longSummary = value.longSummary;
@@ -310,7 +330,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 volume: decomposedVolume.toString(),
                 avgVolume: decomposedAvgVol.toString(),
                 divYield: divYield.toString(),
-                divRate: divRate.toString(),
+                yieldValue: yieldValue.toString(),
                 sector: sector.toString(),
                 sharesOuts: decomposedSharesOuts.toString(),
                 country: country.toString(),

@@ -9,12 +9,10 @@ import 'package:fyp_flutter/models/sharpe_model.dart';
 import 'package:fyp_flutter/models/sortino_model.dart';
 import 'package:fyp_flutter/models/time_series_model.dart';
 import 'package:http/http.dart' as http;
-// import 'package:socket_io_client/socket_io_client.dart' as IO;
 
 String ipAddressEmulator = 'http://10.0.2.2';
 String ipAddressDevice = 'http://10.59.24.112';
-
-// String ipAddressDevice = 'http://10.27.255.124';
+String portNumber = '5000';
 
 class CompanyInfoApi {
   Future<CompanyInfo> getCompanyInfo(ticker) async {

@@ -15,7 +15,7 @@ class CompanyInfo {
   final num sharesOutst;
   final num forwardPE;
   final num? divYield;
-  final num? divRate;
+  final num? yield;
 
   CompanyInfo({
     required this.logoUrl,
@@ -34,7 +34,7 @@ class CompanyInfo {
     required this.sharesOutst,
     required this.forwardPE,
     this.divYield,
-    this.divRate,
+    this.yield,
   });
 
   factory CompanyInfo.fromJson(Map<String, dynamic> json) {
@@ -55,7 +55,7 @@ class CompanyInfo {
       sharesOutst: json['sharesOutst'],
       forwardPE: json['forwardPE'],
       divYield: json['divYield'],
-      divRate: json['divRate'],
+      yield: json['yield'],
     );
   }
 }

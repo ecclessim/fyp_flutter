@@ -17,6 +17,11 @@ class HelperMethods {
     }
   }
 
+// percentify
+  static String percentify(num value) {
+    return (value * 100).toStringAsFixed(2) + '%';
+  }
+
 // Show a custom styled snackbar to display messages to the user.
   static ScaffoldFeatureController<SnackBar, SnackBarClosedReason> showSnackBar(
       BuildContext context, String msg) {

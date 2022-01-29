@@ -58,14 +58,6 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
                           fontWeight: FontWeight.w900,
                         )),
                   ),
-                  // Text('Portfolio Date Started: $portfolioDateStarted'),
-                  // Text('Portfolio Value: $portfolioValue'),
-                  // Text('Expected Annual Return: $expAnnualReturn'),
-                  // Text('Expected Annual Volatility: $expAnnualVolatility'),
-                  // Text('Expected Dollar Return: $expectedDollarReturn'),
-                  // Text('Principal Leftover: $principalLeftover'),
-                  // Text('Ratio: $retrievedRatio'),
-                  // Text('Suggested Weights'),
                   Padding(
                     padding: const EdgeInsets.only(left: 30, right: 30),
                     child: RichText(
@@ -111,29 +103,6 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
                     ),
                   ),
                   SizedBox(height: 40),
-                  // Expanded(
-                  //   child: ListView.builder(
-                  //     shrinkWrap: true,
-                  //     itemCount: retrievedWeights.length,
-                  //     itemBuilder: (context, index) {
-                  //       return Text(
-                  //         '${retrievedWeights[index].ticker} ${retrievedWeights[index].weight}',
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
-                  // Text('Suggested Allocations'),
-                  // Expanded(
-                  //   child: ListView.builder(
-                  //     shrinkWrap: true,
-                  //     itemCount: retrievedAllocations.length,
-                  //     itemBuilder: (context, index) {
-                  //       return Text(
-                  //         '${retrievedAllocations[index].ticker} ${retrievedAllocations[index].shares}',
-                  //       );
-                  //     },
-                  //   ),
-                  // ),
                   PieChart(
                     dataMap: retrievedAllocationMap,
                     animationDuration: Duration(milliseconds: 800),
