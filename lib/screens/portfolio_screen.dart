@@ -1,23 +1,29 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_flutter/firebase_controller/firestore_repo.dart';
 import 'package:fyp_flutter/helper_screen/helper_methods.dart';
+import 'package:fyp_flutter/screens/rl_model_result_screen.dart';
 import 'package:fyp_flutter/screens/stock_records_screen.dart';
 import 'package:fyp_flutter/webservices/web_services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:developer';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 class PortfolioScreen extends StatefulWidget {
   final currentPortfolio;
   final portfolioPrincipal;
+  final uid;
 
-  PortfolioScreen({this.currentPortfolio, this.portfolioPrincipal});
+  PortfolioScreen({this.currentPortfolio, this.portfolioPrincipal, this.uid});
   @override
   _PortfolioScreenState createState() => _PortfolioScreenState();
 }
 
 class _PortfolioScreenState extends State<PortfolioScreen> {
   List stocks = [];
-
+  String uniqueTickers = "";
   @override
   void initState() {
     super.initState();
@@ -46,10 +52,12 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 ),
               ),
               child: TextButton.icon(
-                  onPressed: () => {
-                        FireStoreRepo()
-                            .calculateStockWeights(widget.currentPortfolio),
-                      },
+                  onPressed: () async {
+                    //show loading indicator
+                    showLoadingDialog(context);
+                    await getRlModelPrediction(
+                        widget.currentPortfolio, widget.portfolioPrincipal);
+                  },
                   icon: Icon(Icons.spa_rounded),
                   style: ButtonStyle(
                     shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -295,11 +303,65 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     print("$value");
                     setState(() {
                       HelperMethods.showSnackBar(context, "Loaded Stocks");
+                      uniqueTickers = tickerString;
                       stocks = value;
                     });
                   }),
                 }
             });
+  }
+
+  Future getRlModelPrediction(
+      String portfolioName, double portfolioValue) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    // await prefs.clear();
+
+    // case where shared_preferences is empty or > 1 day old : regenerate analysis
+    // case where shared_preferences data exists and is < 1 day old : use data from shared_preferences
+    // print(
+    //     "getRlModelPrediction: => RECEIVED ${prefs.getString("modelResponse")}");
+
+    if (prefs.getString("${portfolioName}modelResponse") == null ||
+        DateTime.now()
+                .difference(DateTime.parse(
+                    prefs.getString("${portfolioName}modelResponseDate")!))
+                .inDays >
+            1) {
+      print("getRlModelPrediction: => Regenerating prediction");
+      await RLModelApi()
+          .getModelPrediction(widget.currentPortfolio + widget.uid,
+              uniqueTickers, widget.portfolioPrincipal.toString())
+          .then((value) => {
+                prefs.setString(
+                    '${portfolioName}modelResponse', jsonEncode(value)),
+                prefs.setString('${portfolioName}modelResponseDate',
+                    DateTime.now().toString()),
+                Navigator.pop(context),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => RlResultsScreen(
+                      portfolioName: portfolioName,
+                      portfolioValue: portfolioValue,
+                      results: jsonEncode(value),
+                    ),
+                  ),
+                ),
+              });
+    } else {
+      print("getRlModelPrediction: => Using cached prediction");
+      Navigator.pop(context);
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => RlResultsScreen(
+            portfolioName: portfolioName,
+            portfolioValue: portfolioValue,
+            results: prefs.getString('${portfolioName}modelResponse'),
+          ),
+        ),
+      );
+    }
   }
 
   Future showStockRecordDialog(
@@ -310,6 +372,47 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           return StockRecordsScreen(
               currentPortfolio: selectedPortfolio,
               selectedTicker: selectedTicker);
+        });
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20.0)),
+            child: Container(
+              height: 150,
+              width: 200,
+              child: Center(
+                  child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20.0),
+                    child: CircularProgressIndicator(),
+                  ),
+                  SizedBox(
+                    height: 30,
+                  ),
+                  Text(
+                    "Analysing...",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(fontSize: 14),
+                  ),
+                  SizedBox(height: 5),
+                  Text(
+                    "Please do not close this dialog.",
+                    textAlign: TextAlign.center,
+                    style: GoogleFonts.roboto(
+                        fontSize: 14, fontWeight: FontWeight.bold),
+                  )
+                ],
+              )),
+            ),
+          );
         });
   }
 }

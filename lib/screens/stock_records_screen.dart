@@ -18,14 +18,14 @@ class _StockRecordsScreenState extends State<StockRecordsScreen> {
   @override
   void initState() {
     super.initState();
-    // FireStoreRepo()
-    //     .getStockRecords(widget.currentPortfolio, widget.selectedTicker)
-    //     .then((value) {
-    //   setState(() {
-    //     stockRecords = value;
-    //     averageSharePrice = getAvgSharePrice(stockRecords);
-    //   });
-    // });
+    FireStoreRepo()
+        .getStockRecords(widget.currentPortfolio, widget.selectedTicker)
+        .then((value) {
+      setState(() {
+        stockRecords = value;
+        // averageSharePrice = getAvgSharePrice(stockRecords);
+      });
+    });
   }
 
   double getAvgSharePrice(List<dynamic> stockRecords) {

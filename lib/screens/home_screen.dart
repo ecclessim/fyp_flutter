@@ -9,6 +9,7 @@ import 'package:fyp_flutter/screens/new_portfolio_screen.dart';
 import 'package:fyp_flutter/screens/portfolio_screen.dart';
 import 'package:fyp_flutter/screens/profile_screen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -21,10 +22,10 @@ class _HomeScreenState extends State<HomeScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
   List<dynamic> portfolios = [];
-
   @override
   void initState() {
     super.initState();
+
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -32,15 +33,31 @@ class _HomeScreenState extends State<HomeScreen> {
         .then((value) {
       setState(() {
         this.loggedInUser = UserModel.fromMap(value.data());
-      });
-    });
-    var userImage = StorageRepo().getProfileImage(user?.uid);
-    userImage.then((value) {
-      setState(() {
-        loggedInUser.avatarUrl = value;
+        _loadSharedPreferences().then((value) {
+          this.loggedInUser.avatarUrl = value;
+        });
       });
     });
     _getPortfolioNames();
+  }
+
+  Future<String?> _loadSharedPreferences() async {
+    try {
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? imgUrl = prefs.getString("profile_image");
+      if (imgUrl != null) {
+        return imgUrl;
+      } else {
+        await StorageRepo()
+            .getProfileImage(user?.uid)
+            .then((value) => setState(() {
+                  loggedInUser.avatarUrl = value;
+                }));
+      }
+      return null;
+    } catch (e) {
+      print(e);
+    }
   }
 
   Future<void> _getPortfolioNames() async {
@@ -254,12 +271,14 @@ class _HomeScreenState extends State<HomeScreen> {
                                             MaterialPageRoute(
                                                 builder: (context) =>
                                                     PortfolioScreen(
-                                                        currentPortfolio:
-                                                            portfolios[index][
-                                                                'portfolioName'],
-                                                        portfolioPrincipal:
-                                                            portfolios[index][
-                                                                'initialPrincipal'])));
+                                                      currentPortfolio:
+                                                          portfolios[index]
+                                                              ['portfolioName'],
+                                                      portfolioPrincipal:
+                                                          portfolios[index][
+                                                              'portfolioValue'],
+                                                      uid: loggedInUser.uid,
+                                                    )));
                                       },
                                     ),
                                   ),
