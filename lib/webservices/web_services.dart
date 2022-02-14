@@ -5,20 +5,44 @@ import 'package:candlesticks/candlesticks.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp_flutter/models/company_info_model.dart';
 import 'package:fyp_flutter/models/min_vol_model.dart';
+import 'package:fyp_flutter/models/model_status.dart';
 import 'package:fyp_flutter/models/sharpe_model.dart';
 import 'package:fyp_flutter/models/sortino_model.dart';
 import 'package:fyp_flutter/models/time_series_model.dart';
 import 'package:http/http.dart' as http;
 
 String ipAddressEmulator = 'http://10.0.2.2';
-// String ipAddressDevice = 'http://10.59.24.112';
+String ipAddressDevice = 'http://10.59.24.112';
 String portNumber = '5000';
 //NTU IP
-String ipAddressDevice = "http://10.27.54.118";
+// String ipAddressDevice = "http://10.27.54.118";
 
 class RLModelApi {
+  Future<ModelStatus> trainModel(
+      String portfolioName, String portfolioStocks, String principal) async {
+    Map<String, String> headers = {"Content-type": "application/json"};
+    Map<String, String> params = {
+      "portfolio_name": portfolioName,
+      "portfolio_stocks": portfolioStocks,
+      "principal": principal
+    };
+    final url =
+        '$ipAddressDevice:$portNumber/train_ppo_model?portfolio_name=${params['portfolio_name']}&portfolio_stocks=${params['portfolio_stocks']}&portfolio_principal=${params['principal']}';
+    return http
+        .get(Uri.parse(url), headers: headers)
+        .then((http.Response response) {
+      final int statusCode = response.statusCode;
+      if (statusCode < 200 || statusCode > 400) {
+        throw new Exception("Error while fetching data");
+      }
+      // print(response.body);
+      final responseJson = json.decode(response.body);
+      return ModelStatus.fromJson(responseJson);
+    });
+  }
+
   Future<dynamic> getModelPrediction(
-      String portfolioName, String portfolioStocks, String principal) {
+      String portfolioName, String portfolioStocks, String principal) async {
     Map<String, String> headers = {"Content-type": "application/json"};
     Map<String, String> params = {
       "portfolio_name": portfolioName,
@@ -35,7 +59,7 @@ class RLModelApi {
       if (statusCode < 200 || statusCode > 400) {
         throw new Exception("Error while fetching data");
       }
-      print(response.body);
+      // print(response.body);
       return json.decode(response.body);
     });
   }

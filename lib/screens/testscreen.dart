@@ -27,8 +27,8 @@ class _TestScreenState extends State<TestScreen> {
             boxShadow: [
               BoxShadow(
                 color: Colors.black12,
-                blurRadius: 50,
-                spreadRadius: 2,
+                blurRadius: 3,
+                spreadRadius: 3,
               ),
             ],
             borderRadius: BorderRadius.only(

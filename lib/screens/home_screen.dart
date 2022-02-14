@@ -76,6 +76,60 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black54,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.vertical(
+              bottom: Radius.circular(30),
+            ),
+          ),
+          leading: IconButton(
+            icon: loggedInUser.avatarUrl == null
+                ? CircleAvatar(child: Icon(Icons.person))
+                : CircleAvatar(
+                    backgroundImage: NetworkImage(loggedInUser.avatarUrl!),
+                  ),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ProfileScreen(),
+                ),
+              );
+            },
+          ),
+          title: Column(
+            children: [
+              Text(
+                "Hello, ${loggedInUser.username}",
+                overflow: TextOverflow.ellipsis,
+                style: GoogleFonts.roboto(
+                  textStyle: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              portfolios.length > 0
+                  ? Text(
+                      "Showing all created portfolios",
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                      ),
+                    )
+                  : Text(
+                      "Welcome to Momo Manager",
+                      overflow: TextOverflow.ellipsis,
+                      style: GoogleFonts.roboto(
+                        fontSize: 16,
+                      ),
+                    ),
+            ],
+          ),
+          centerTitle: true,
+        ),
         floatingActionButton: Padding(
           padding: const EdgeInsets.only(right: 25),
           child: FloatingActionButton(
@@ -94,73 +148,6 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Container(
-                  width: 100,
-                  height: 85,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black12,
-                        blurRadius: 50,
-                        spreadRadius: 2,
-                      ),
-                    ],
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(30),
-                      bottomRight: Radius.circular(30),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: EdgeInsetsDirectional.fromSTEB(15, 12, 15, 0),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Align(
-                            alignment: AlignmentDirectional(0, 0),
-                            child: ListTile(
-                              leading: IconButton(
-                                icon: loggedInUser.avatarUrl == null
-                                    ? CircleAvatar(child: Icon(Icons.person))
-                                    : CircleAvatar(
-                                        backgroundImage: NetworkImage(
-                                            loggedInUser.avatarUrl!),
-                                      ),
-                                onPressed: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => ProfileScreen(),
-                                    ),
-                                  );
-                                },
-                              ),
-                              title: Text(
-                                "Hello, ${loggedInUser.username}",
-                                style: GoogleFonts.roboto(
-                                  fontSize: 22,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              subtitle: portfolios.length > 0
-                                  ? Text(
-                                      "Showing all created portfolios",
-                                      style: GoogleFonts.roboto(),
-                                    )
-                                  : Text(
-                                      "Welcome to Momo Manager",
-                                      style: GoogleFonts.roboto(),
-                                    ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
                 SizedBox(
                   height: 15,
                 ),
@@ -237,7 +224,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                   child: Card(
                                     shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.all(
-                                        Radius.circular(15),
+                                        Radius.circular(20),
                                       ),
                                     ),
                                     elevation: 2,
@@ -258,7 +245,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ),
                                       ),
                                       subtitle: Text(
-                                        "\$${HelperMethods.numberCommafy(HelperMethods.centsToDollars(portfolios[index]['portfolioValue'].round()).toString())}",
+                                        "Total: \$${HelperMethods.numberCommafy(HelperMethods.centsToDollars(portfolios[index]['portfolioValue'].round()).toString())}",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.roboto(
                                           fontSize: 20,

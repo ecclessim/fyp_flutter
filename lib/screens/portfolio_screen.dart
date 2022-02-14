@@ -3,11 +3,12 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp_flutter/firebase_controller/firestore_repo.dart';
 import 'package:fyp_flutter/helper_screen/helper_methods.dart';
+import 'package:fyp_flutter/models/model_status.dart';
 import 'package:fyp_flutter/screens/rl_model_result_screen.dart';
 import 'package:fyp_flutter/screens/stock_records_screen.dart';
 import 'package:fyp_flutter/webservices/web_services.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'dart:developer';
+// import 'dart:developer';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,6 +34,33 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black54,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
+        title: Column(
+          children: [
+            Text(
+              "${widget.currentPortfolio}",
+              style: GoogleFonts.roboto(
+                textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              "Showing all stocks in the portfolio.",
+              style: GoogleFonts.roboto(fontSize: 16),
+            )
+          ],
+        ),
+        centerTitle: true,
+      ),
       bottomSheet: stocks.length >= 4
           ? Container(
               height: 50,
@@ -102,49 +130,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                 mainAxisSize: MainAxisSize.max,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Container(
-                    width: 100,
-                    height: 85,
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black12,
-                          blurRadius: 50,
-                          spreadRadius: 2,
-                        ),
-                      ],
-                      borderRadius: BorderRadius.only(
-                        bottomLeft: Radius.circular(30),
-                        bottomRight: Radius.circular(30),
-                      ),
-                    ),
-                    child: Padding(
-                      padding: EdgeInsetsDirectional.fromSTEB(15, 12, 15, 0),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Align(
-                              alignment: AlignmentDirectional(0, 0),
-                              child: ListTile(
-                                title: Text(
-                                  "${widget.currentPortfolio}",
-                                  style: GoogleFonts.montserrat(
-                                    fontSize: 26,
-                                    fontWeight: FontWeight.w600,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
                   SizedBox(
                     height: 15,
                   ),
@@ -297,10 +282,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
               if (value.length > 0)
                 {
                   tickerString = value.join(" "),
-                  print("Combined tickers: " + tickerString),
+                  // print("Combined tickers: " + tickerString),
                   await api.getDailyStock(tickerString).then((value) {
-                    print("FETCHED DAILY STOCK DATA");
-                    print("$value");
+                    // print("FETCHED DAILY STOCK DATA");
+                    // print("$value");
                     setState(() {
                       HelperMethods.showSnackBar(context, "Loaded Stocks");
                       uniqueTickers = tickerString;
@@ -318,20 +303,60 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
     // case where shared_preferences is empty or > 1 day old : regenerate analysis
     // case where shared_preferences data exists and is < 1 day old : use data from shared_preferences
-    // print(
-    //     "getRlModelPrediction: => RECEIVED ${prefs.getString("modelResponse")}");
 
+    double pfValue = await FireStoreRepo().getPortfolioValue(portfolioName);
+    int convertedPfValue = pfValue.round();
+    bool isPfValueSame = (prefs.getString("${portfolioName}modelValue") ==
+        convertedPfValue.toString());
+    bool cachedTimeDifference = DateTime.now()
+            .difference(DateTime.parse(
+                prefs.getString("${portfolioName}modelResponseDate")!))
+            .inDays >
+        1;
+    print("$convertedPfValue");
     if (prefs.getString("${portfolioName}modelResponse") == null ||
-        DateTime.now()
-                .difference(DateTime.parse(
-                    prefs.getString("${portfolioName}modelResponseDate")!))
-                .inDays >
-            1) {
+        !isPfValueSame) {
+      print("Regenerating model");
+      try {
+        await RLModelApi()
+            .trainModel(widget.currentPortfolio + widget.uid, uniqueTickers,
+                convertedPfValue.toString())
+            .then((value) {
+          print("Model Status: ${value.status}");
+        });
+        await RLModelApi()
+            .getModelPrediction(widget.currentPortfolio + widget.uid,
+                uniqueTickers, convertedPfValue.toString())
+            .then((value) => {
+                  prefs.setString("${portfolioName}modelValue",
+                      convertedPfValue.toString()),
+                  prefs.setString(
+                      '${portfolioName}modelResponse', jsonEncode(value)),
+                  prefs.setString('${portfolioName}modelResponseDate',
+                      DateTime.now().toString()),
+                  Navigator.pop(context),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => RlResultsScreen(
+                        portfolioName: portfolioName,
+                        portfolioValue: convertedPfValue,
+                        results: jsonEncode(value),
+                      ),
+                    ),
+                  ),
+                });
+      } catch (e) {
+        print("Error: $e");
+      }
+    } else if (cachedTimeDifference) {
       print("getRlModelPrediction: => Regenerating prediction");
       await RLModelApi()
           .getModelPrediction(widget.currentPortfolio + widget.uid,
-              uniqueTickers, widget.portfolioPrincipal.toString())
+              uniqueTickers, convertedPfValue.toString())
           .then((value) => {
+                prefs.setString(
+                    "${portfolioName}modelValue", convertedPfValue.toString()),
                 prefs.setString(
                     '${portfolioName}modelResponse', jsonEncode(value)),
                 prefs.setString('${portfolioName}modelResponseDate',
@@ -342,7 +367,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   MaterialPageRoute(
                     builder: (context) => RlResultsScreen(
                       portfolioName: portfolioName,
-                      portfolioValue: portfolioValue,
+                      portfolioValue: convertedPfValue,
                       results: jsonEncode(value),
                     ),
                   ),
@@ -356,7 +381,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         MaterialPageRoute(
           builder: (context) => RlResultsScreen(
             portfolioName: portfolioName,
-            portfolioValue: portfolioValue,
+            portfolioValue: convertedPfValue,
             results: prefs.getString('${portfolioName}modelResponse'),
           ),
         ),

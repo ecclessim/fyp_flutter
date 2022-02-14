@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_flutter/helper_screen/company_info_row.dart';
-import 'package:fyp_flutter/helper_screen/helper_methods.dart';
+// import 'package:fyp_flutter/helper_screen/helper_methods.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class CompanyInfoWidget extends StatelessWidget {

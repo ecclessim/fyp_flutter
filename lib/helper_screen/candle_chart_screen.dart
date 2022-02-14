@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp_flutter/webservices/web_services.dart';
 
+// ignore: must_be_immutable
 class CandleChartScreen extends StatefulWidget {
   List<Candle> timeSeries;
   final String ticker;

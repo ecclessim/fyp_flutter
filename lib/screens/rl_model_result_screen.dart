@@ -1,4 +1,4 @@
-import 'dart:convert';
+// import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:fyp_flutter/helper_screen/helper_methods.dart';
@@ -85,9 +85,8 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
   processResults() {
     final ppoModel = ppoModelFromJson(widget.results);
     setState(() {
-      portfolioValueString = HelperMethods.numberCommafy(
-          HelperMethods.centsToDollars(widget.portfolioValue.round())
-              .toString());
+      portfolioValueString =
+          HelperMethods.numberCommafy(widget.portfolioValue.toString());
       decodedResults = ppoModel;
       cumulativeReturns = ppoModel.cumulativeMeanMonthlyReturn;
       retrievedAllocationMap = ppoModel.suggestedAllocation[0];
@@ -107,6 +106,33 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black54,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
+        title: Column(
+          children: [
+            Text(
+              "${widget.portfolioName}",
+              style: GoogleFonts.roboto(
+                textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              "Showing projected results.",
+              style: GoogleFonts.roboto(fontSize: 16),
+            )
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -115,15 +141,8 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(
-                      top: 40, left: 20, right: 20, bottom: 100),
-                  child: Text('${widget.portfolioName}',
-                      textAlign: TextAlign.center,
-                      style: GoogleFonts.roboto(
-                        fontSize: 36,
-                        fontWeight: FontWeight.w900,
-                      )),
+                SizedBox(
+                  height: 50,
                 ),
                 Padding(
                   padding: const EdgeInsets.only(left: 30, right: 30),

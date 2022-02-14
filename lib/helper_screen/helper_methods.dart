@@ -89,7 +89,7 @@ class HelperMethods {
 
   static double centsToDollars(int value) {
     double converted = double.parse((value / 100).toStringAsFixed(2));
-    print("centsToDollars: $value -> $converted");
+    // print("centsToDollars: $value -> $converted");
     return converted;
   }
 

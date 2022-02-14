@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fyp_flutter/helper_screen/helper_methods.dart';
 import 'package:fyp_flutter/models/portfolio_model.dart';
 import 'package:fyp_flutter/models/stock_model.dart';
-import 'package:fyp_flutter/webservices/web_services.dart';
-import 'package:decimal/decimal.dart';
+// import 'package:fyp_flutter/webservices/web_services.dart';
+// import 'package:decimal/decimal.dart';
 
 // Create portfolio
 // Get user portfolios
@@ -41,8 +41,8 @@ class FireStoreRepo {
 
     // Get data from docs and convert map to List
     final allData = querySnapshot.docs.map((doc) => doc.data()).toList();
-    print("FETCHED PORTFOLIO DATA");
-    print(allData);
+    // print("FETCHED PORTFOLIO DATA");
+    // print(allData);
     return allData;
   }
 

@@ -108,12 +108,16 @@ class _SearchScreenState extends State<SearchScreen> {
 
   Future _callTimeSeriesApi(ticker, period, interval) async {
     var api = new TimeSeriesApi();
-    await api.getTimeSeries(ticker, period, interval).then((value) => {
-          setState(() {
-            timeSeries = value;
-            print("Time Series retrieved");
-          })
-        });
+    try {
+      await api.getTimeSeries(ticker, period, interval).then((value) => {
+            setState(() {
+              timeSeries = value;
+              print("Time Series retrieved");
+            })
+          });
+    } catch (e) {
+      HelperMethods.showSnackBar(context, "No data found");
+    }
   }
 
   @override
@@ -142,7 +146,12 @@ class _SearchScreenState extends State<SearchScreen> {
               currentFocus.unfocus();
             }
             ticker = tickerController.text;
-            await _callCompanyInfoApi(tickerController.text);
+            try {
+              await _callCompanyInfoApi(tickerController.text);
+            } catch (e) {
+              HelperMethods.showSnackBar(context, "Invalid ticker");
+            }
+
             tickerController.clear();
           },
           child: Text(

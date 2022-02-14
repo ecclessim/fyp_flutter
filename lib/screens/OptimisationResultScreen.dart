@@ -39,6 +39,33 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        foregroundColor: Colors.black54,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.vertical(
+            bottom: Radius.circular(30),
+          ),
+        ),
+        title: Column(
+          children: [
+            Text(
+              "${widget.portfolioName}",
+              style: GoogleFonts.roboto(
+                textStyle: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            Text(
+              "Showing projected results.",
+              style: GoogleFonts.roboto(fontSize: 16),
+            )
+          ],
+        ),
+        centerTitle: true,
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           child: Container(
@@ -48,20 +75,13 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Padding(
-                    padding: const EdgeInsets.only(
-                        top: 40, left: 20, right: 20, bottom: 100),
-                    child: Text('${widget.portfolioName}',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.roboto(
-                          fontSize: 36,
-                          fontWeight: FontWeight.w900,
-                        )),
+                  SizedBox(
+                    height: 50,
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 30, right: 30),
                     child: RichText(
-                      textAlign: TextAlign.left,
+                      textAlign: TextAlign.justify,
                       text: TextSpan(
                           text: "With a principal of",
                           style: GoogleFonts.roboto(
@@ -478,7 +498,7 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
         .getPortfolioValue(widget.portfolioName)
         .then((value) => {
               setState(() {
-                print("_getPortfolioValue: => $value");
+                // print("_getPortfolioValue: => $value");
                 portfolioValue = value;
               }),
             });
