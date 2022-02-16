@@ -56,6 +56,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final _formkey = GlobalKey<FormState>();
 
     return Scaffold(
+      appBar: AppBar(
+        backgroundColor: Colors.blueAccent,
+        //no shadow on appbar
+        elevation: 0,
+      ),
       resizeToAvoidBottomInset: false,
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -73,7 +78,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: <Widget>[
                   Padding(
-                    padding: const EdgeInsets.only(top: 20.0),
+                    padding: const EdgeInsets.only(top: 0.0),
                     child: Avatar(
                       avatarUrl: loggedInUser.avatarUrl,
                       onTap: () async {
@@ -95,7 +100,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   Text(
                     "Settings",
                     textAlign: TextAlign.center,
-                    style: GoogleFonts.poppins(
+                    style: GoogleFonts.roboto(
                       color: Colors.white,
                       fontSize: 30,
                     ),

@@ -306,14 +306,19 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
     double pfValue = await FireStoreRepo().getPortfolioValue(portfolioName);
     int convertedPfValue = pfValue.round();
-    bool isPfValueSame = (prefs.getString("${portfolioName}modelValue") ==
-        convertedPfValue.toString());
-    bool cachedTimeDifference = DateTime.now()
-            .difference(DateTime.parse(
-                prefs.getString("${portfolioName}modelResponseDate")!))
-            .inDays >
-        1;
-    print("$convertedPfValue");
+    bool isPfValueSame = false;
+    bool cachedTimeDifference = false;
+    String? cachedModelValue = prefs.getString("${portfolioName}modelValue");
+    String? cachedModelDate =
+        prefs.getString("${portfolioName}modelResponseDate");
+    if (cachedModelValue != null && cachedModelDate != null) {
+      isPfValueSame = (cachedModelValue == convertedPfValue.toString());
+      cachedTimeDifference =
+          DateTime.now().difference(DateTime.parse(cachedModelDate)).inDays > 1;
+    }
+
+    print("cachedModelValue: $cachedModelValue");
+    print("cachedModelDate: $cachedModelDate");
     if (prefs.getString("${portfolioName}modelResponse") == null ||
         !isPfValueSame) {
       print("Regenerating model");
