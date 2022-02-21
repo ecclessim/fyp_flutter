@@ -12,10 +12,10 @@ import 'package:fyp_flutter/models/time_series_model.dart';
 import 'package:http/http.dart' as http;
 
 String ipAddressEmulator = 'http://10.0.2.2';
-String ipAddressDevice = 'http://10.59.24.112';
+// String ipAddressDevice = 'http://10.59.24.112';
 String portNumber = '5000';
 //NTU IP
-// String ipAddressDevice = "http://10.27.54.118";
+String ipAddressDevice = "http://10.27.162.67";
 
 class RLModelApi {
   Future<ModelStatus> trainModel(

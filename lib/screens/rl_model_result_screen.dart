@@ -29,6 +29,7 @@ class RlResultsScreen extends StatefulWidget {
 }
 
 class _RlResultsScreenState extends State<RlResultsScreen> {
+  bool metricDescFlag = false;
   PpoModel? decodedResults;
   Map<String, double>? cumulativeReturns;
   List<CumulativeReturns>? cumulativeReturnsList;
@@ -60,17 +61,31 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
     ];
   }
 
-  _projectionListTile(String leading, String trailing) {
+  _projectionListTile(String leading, String trailing, String metricDescription,
+      bool visibilityController) {
     return ListTile(
       visualDensity: VisualDensity.compact,
       dense: true,
-      leading: Text(
+      title: Text(
         "$leading",
         style: GoogleFonts.roboto(
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
       ),
+      subtitle: Visibility(
+          visible: visibilityController,
+          child: Padding(
+            padding: const EdgeInsets.only(top: 8.0, bottom: 8.0),
+            child: Text(
+              metricDescription,
+              textAlign: TextAlign.left,
+              style: GoogleFonts.roboto(
+                fontSize: 14,
+                color: Colors.blueAccent,
+              ),
+            ),
+          )),
       trailing: Text(
         "$trailing",
         style: GoogleFonts.roboto(
@@ -78,6 +93,16 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
           fontSize: 16,
           fontWeight: FontWeight.bold,
         ),
+      ),
+    );
+  }
+
+  _customVisibilityDivider(bool visibilityController) {
+    return Visibility(
+      visible: visibilityController,
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 8.0),
+        child: Divider(color: Colors.black38, thickness: 1, height: 0),
       ),
     );
   }
@@ -318,12 +343,24 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
                 Container(
                   width: MediaQuery.of(context).size.width,
                   child: Padding(
-                    padding: const EdgeInsets.only(left: 30, right: 30),
-                    child: Text("Projections:",
-                        textAlign: TextAlign.left,
-                        style: GoogleFonts.roboto(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
+                    padding: const EdgeInsets.only(left: 20, right: 20),
+                    child: ListTile(
+                        leading: Text("Projections:",
+                            textAlign: TextAlign.left,
+                            style: GoogleFonts.roboto(
+                              fontSize: 32,
+                              fontWeight: FontWeight.w900,
+                            )),
+                        trailing: IconButton(
+                          icon: Icon(
+                            Icons.info_outline_rounded,
+                            color: Colors.blueAccent,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              metricDescFlag = !metricDescFlag;
+                            });
+                          },
                         )),
                   ),
                 ),
@@ -342,60 +379,99 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
                               _projectionListTile(
                                   "Expected Annual Return",
                                   _percentify(
-                                      decodedResults!.annualReturn.toDouble())),
+                                      decodedResults!.annualReturn.toDouble()),
+                                  "The expected return is the profit or loss that an investor anticipates on an investment",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Expected Annual Volatility",
                                   _percentify(decodedResults!.annualVolatility
-                                      .toDouble())),
+                                      .toDouble()),
+                                  "Standard deviation of the portfolio's daily arithmetic returns for a one year period.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Alpha",
-                                  _percentify(
-                                      decodedResults!.alpha.toDouble())),
-                              _projectionListTile("Beta",
-                                  _percentify(decodedResults!.beta.toDouble())),
+                                  _percentify(decodedResults!.alpha.toDouble()),
+                                  "Excess returns earned on an investment above the benchmark return.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
+                              _projectionListTile(
+                                  "Beta",
+                                  _percentify(decodedResults!.beta.toDouble()),
+                                  "Beta is a concept that measures the expected move in a stock relative to movements in the overall market.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Cumulative Returns",
                                   _percentify(decodedResults!.cumulativeReturns
-                                      .toDouble())),
+                                      .toDouble()),
+                                  "The cumulative return is the total change in the investment price over a set time",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Daily Value at Risk",
                                   _percentify(decodedResults!.dailyValueAtRisk
-                                      .toDouble())),
-                              _projectionListTile("Kurtosis",
-                                  decodedResults!.kurtosis.toStringAsFixed(3)),
+                                      .toDouble()),
+                                  "The maximum loss expected (or worst case scenario) on an investment, over a given time period and given a specified degree of confidence",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
+                              _projectionListTile(
+                                  "Kurtosis",
+                                  decodedResults!.kurtosis.toStringAsFixed(3),
+                                  "A large kurtosis is associated with a high risk for an investment because it indicates high probabilities of extremely large and extremely small returns.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
+                              _projectionListTile(
+                                  "Skew",
+                                  decodedResults!.skew.toStringAsFixed(3),
+                                  "The negative skewness of the distribution indicates that an investor may expect frequent small gains and a few large losses.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Maximum Drawdown",
                                   _percentify(
-                                      decodedResults!.maxDrawdown.toDouble())),
+                                      decodedResults!.maxDrawdown.toDouble()),
+                                  "The maximum observed loss from a peak to a trough of a portfolio",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Calmar Ratio",
                                   decodedResults!.calmarRatio
-                                      .toStringAsFixed(3)),
+                                      .toStringAsFixed(3),
+                                  "Calmar Ratio is a measure of risk-adjusted returns using a fund's maximum drawdown as it's sole measure of risk.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Omega Ratio",
-                                  decodedResults!.omegaRatio
-                                      .toStringAsFixed(3)),
+                                  decodedResults!.omegaRatio.toStringAsFixed(3),
+                                  "Omega Ratio is a weighted risk-return ratio for a given level of expected return that helps us to identify the chances of winning in comparison to losing (higher = better). It also considers skewness and kurtosis",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Sharpe Ratio",
                                   decodedResults!.sharpeRatio
-                                      .toStringAsFixed(3)),
+                                      .toStringAsFixed(3),
+                                  "The Sharpe Ratio is the average return earned in excess of the risk-free rate per unit of volatility or total risk. Volatility is a measure of the price fluctuations of an asset or portfolio.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
                                   "Sortino Ratio",
                                   decodedResults!.sortinoRatio
-                                      .toStringAsFixed(3)),
-                              _projectionListTile("Tail Ratio",
-                                  decodedResults!.tailRatio.toStringAsFixed(3)),
+                                      .toStringAsFixed(3),
+                                  "The Sortino Ratio takes an asset or portfolio's return and subtracts the risk-free rate, and then divides that amount by the asset's downside deviation.",
+                                  metricDescFlag),
+                              _customVisibilityDivider(metricDescFlag),
                               _projectionListTile(
-                                "Skew",
-                                decodedResults!.skew.toStringAsFixed(3),
-                              ),
-                              _projectionListTile(
-                                  "Stability",
+                                  "Tail Ratio",
                                   _percentify(
-                                      decodedResults!.stability.toDouble())),
+                                      decodedResults!.tailRatio.toDouble()),
+                                  "Tail risk is the chance of a loss occurring due to a rare event, as predicted by a probability distribution.",
+                                  metricDescFlag),
                             ])),
                       )),
                 ),
+                SizedBox(height: 50),
               ],
             ),
           ),

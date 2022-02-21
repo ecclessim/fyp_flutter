@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp_flutter/firebase_controller/firestore_repo.dart';
 import 'package:fyp_flutter/helper_screen/helper_methods.dart';
-import 'package:fyp_flutter/models/model_status.dart';
 import 'package:fyp_flutter/screens/rl_model_result_screen.dart';
 import 'package:fyp_flutter/screens/stock_records_screen.dart';
 import 'package:fyp_flutter/webservices/web_services.dart';
@@ -294,6 +293,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   }),
                 }
             });
+    await FireStoreRepo()
+        .calculateStockWeights(widget.currentPortfolio)
+        .then((value) {
+      setState(() {
+        print("get stock weights => $value");
+      });
+    });
   }
 
   Future getRlModelPrediction(

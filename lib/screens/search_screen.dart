@@ -50,7 +50,7 @@ class _SearchScreenState extends State<SearchScreen> {
   double dailyChange = 0;
   double dailyPctChange = 0.0;
   Object tickerInfo = {};
-
+  bool hasResult = false;
   Widget getTickerWidget(String quoteType, var object) {
     switch (quoteType) {
       case "EQUITY":
@@ -74,6 +74,7 @@ class _SearchScreenState extends State<SearchScreen> {
       var api = new CompanyInfoApi();
       await api.getCompanyInfo(ticker).then((value) => {
             setState(() {
+              hasResult = true;
               _searchTitle = value.ticker;
               _searchSubtitle = value.companyName;
               logoUrl = value.logoUrl;
@@ -290,61 +291,70 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                     ),
                   )),
-              Padding(
-                padding: const EdgeInsets.all(20),
-                child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text("\$$currentPrice",
-                          style: GoogleFonts.roboto(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w600,
-                            color: greenOrRed(
-                                double.tryParse(
-                                  currentPrice.toString(),
-                                ),
-                                double.tryParse(previousClose.toString())),
-                          )),
-                      Column(
-                        children: [
-                          Text("${dailyChange.toStringAsFixed(2)}",
-                              style: GoogleFonts.roboto(
-                                  fontSize: 24,
-                                  color: greenOrRed(
-                                      double.tryParse(dailyChange.toString()),
-                                      0))),
-                          Text("${dailyPctChange.toStringAsFixed(2)}%",
-                              style: GoogleFonts.roboto(
-                                  fontSize: 16,
+              Visibility(
+                visible: hasResult,
+                child: Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text("\$$currentPrice",
+                                style: GoogleFonts.roboto(
+                                  fontSize: 36,
+                                  fontWeight: FontWeight.w600,
                                   color: greenOrRed(
                                       double.tryParse(
-                                        dailyPctChange.toString(),
+                                        currentPrice.toString(),
                                       ),
-                                      0))),
-                        ],
-                      ),
-                    ]),
-              ),
-              Container(
-                height: 395,
-                width: MediaQuery.of(context).size.width * 0.90 + 10,
-                child: CandleChartScreen(
-                    ticker: ticker, timeSeries: timeSeries, interval: ""),
-              ),
-              CompanyInfoWidget(
-                open: open.toString(),
-                previousClose: previousClose.toString(),
-                mktCap: decomposedMktCap.toString(),
-                forwardPE: forwardPE.toString(),
-                volume: decomposedVolume.toString(),
-                avgVolume: decomposedAvgVol.toString(),
-                divYield: divYield.toString(),
-                yieldValue: yieldValue.toString(),
-                sector: sector.toString(),
-                sharesOuts: decomposedSharesOuts.toString(),
-                country: country.toString(),
-                weekChange52: weekChange52.toString(),
-                longSummary: longSummary.toString(),
+                                      double.tryParse(
+                                          previousClose.toString())),
+                                )),
+                            Column(
+                              children: [
+                                Text("${dailyChange.toStringAsFixed(2)}",
+                                    style: GoogleFonts.roboto(
+                                        fontSize: 24,
+                                        color: greenOrRed(
+                                            double.tryParse(
+                                                dailyChange.toString()),
+                                            0))),
+                                Text("${dailyPctChange.toStringAsFixed(2)}%",
+                                    style: GoogleFonts.roboto(
+                                        fontSize: 16,
+                                        color: greenOrRed(
+                                            double.tryParse(
+                                              dailyPctChange.toString(),
+                                            ),
+                                            0))),
+                              ],
+                            ),
+                          ]),
+                    ),
+                    Container(
+                      height: 395,
+                      width: MediaQuery.of(context).size.width * 0.90 + 10,
+                      child: CandleChartScreen(
+                          ticker: ticker, timeSeries: timeSeries, interval: ""),
+                    ),
+                    CompanyInfoWidget(
+                      open: open.toString(),
+                      previousClose: previousClose.toString(),
+                      mktCap: decomposedMktCap.toString(),
+                      forwardPE: forwardPE.toString(),
+                      volume: decomposedVolume.toString(),
+                      avgVolume: decomposedAvgVol.toString(),
+                      divYield: divYield.toString(),
+                      yieldValue: yieldValue.toString(),
+                      sector: sector.toString(),
+                      sharesOuts: decomposedSharesOuts.toString(),
+                      country: country.toString(),
+                      weekChange52: weekChange52.toString(),
+                      longSummary: longSummary.toString(),
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

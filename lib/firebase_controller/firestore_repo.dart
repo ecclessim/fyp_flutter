@@ -336,10 +336,11 @@ class FireStoreRepo {
     }
   }
 
-  Future<void> calculateStockWeights(String portfolioName) async {
+  Future<List> calculateStockWeights(String portfolioName) async {
     print(
         "calculateStockWeights: $portfolioName -------------------------------------------------");
     User? user = auth.currentUser;
+    List<Map<String, double>> weights = [];
     double portfolioValue = await firebaseFirestore
         .collection('users')
         .doc(user!.uid)
@@ -362,9 +363,11 @@ class FireStoreRepo {
         String weightPct = (weight * 100).toStringAsFixed(2);
         value += weight;
         print("$ticker, $weightPct%, $value");
+        weights.add({'$ticker': weight});
       });
       print(
           "calculateStockWeights: END DEBUG -------------------------------------------------");
     });
+    return weights;
   }
 }
