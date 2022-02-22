@@ -13,7 +13,7 @@ class StockRecordsScreen extends StatefulWidget {
 
 class _StockRecordsScreenState extends State<StockRecordsScreen> {
   List<dynamic> stockRecords = [];
-  // double averageSharePrice = 0.0;
+  double averageSharePrice = 0.0;
 
   @override
   void initState() {
@@ -23,7 +23,7 @@ class _StockRecordsScreenState extends State<StockRecordsScreen> {
         .then((value) {
       setState(() {
         stockRecords = value;
-        // averageSharePrice = getAvgSharePrice(stockRecords);
+        averageSharePrice = getAvgSharePrice(stockRecords);
       });
     });
   }
@@ -159,6 +159,31 @@ class _StockRecordsScreenState extends State<StockRecordsScreen> {
                   },
                   itemCount: stockRecords.length,
                   shrinkWrap: true),
+              SizedBox(
+                height: 15,
+              ),
+              Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      "Average share price",
+                      style: GoogleFonts.roboto(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    Text(
+                      "\$$averageSharePrice",
+                      style: GoogleFonts.roboto(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ]))),
       ),
     );
