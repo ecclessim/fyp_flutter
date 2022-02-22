@@ -338,8 +338,8 @@ class FireStoreRepo {
 
   Future<List<Map<String, dynamic>>> calculateStockWeights(
       String portfolioName) async {
-    print(
-        "calculateStockWeights: $portfolioName -------------------------------------------------");
+    // print(
+    //     "calculateStockWeights: $portfolioName -------------------------------------------------");
     User? user = auth.currentUser;
     List<Map<String, dynamic>> weights = [];
     double portfolioValue = await firebaseFirestore
@@ -357,17 +357,17 @@ class FireStoreRepo {
         .collection('weights');
     //loop through each totalAssetValue and calculate weight against portfolioValue
     await _weightReference.get().then((snapshot) {
-      double value = 0;
+      // double value = 0;
       snapshot.docs.forEach((doc) {
         String ticker = doc.get('ticker');
         double weight = doc.get('totalAssetValue') / portfolioValue;
-        String weightPct = (weight * 100).toStringAsFixed(2);
-        value += weight;
-        print("$ticker, $weightPct%, $value");
+        // String weightPct = (weight * 100).toStringAsFixed(2);
+        // value += weight;
+        // print("$ticker, $weightPct%, $value");
         weights.add({"ticker": ticker, "weight": weight});
       });
-      print(
-          "calculateStockWeights: END DEBUG -------------------------------------------------");
+      // print(
+      //     "calculateStockWeights: END DEBUG -------------------------------------------------");
     });
     return weights;
   }

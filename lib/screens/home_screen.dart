@@ -239,7 +239,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         portfolios[index]['portfolioName'],
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.roboto(
-                                          fontSize: 28,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -248,7 +248,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         "Total: \$${HelperMethods.numberCommafy(HelperMethods.centsToDollars(portfolios[index]['portfolioValue'].round()).toString())}",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.roboto(
-                                          fontSize: 20,
+                                          fontSize: 12,
                                           color: Colors.white70,
                                         ),
                                       ),
