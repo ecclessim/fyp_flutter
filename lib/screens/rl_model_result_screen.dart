@@ -81,7 +81,7 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
               metricDescription,
               textAlign: TextAlign.left,
               style: GoogleFonts.roboto(
-                fontSize: 14,
+                fontSize: 15,
                 color: Colors.blueAccent,
               ),
             ),
@@ -235,6 +235,7 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
                     child: Text("Asset Weights:",
                         textAlign: TextAlign.left,
                         style: GoogleFonts.roboto(
+                          color: Colors.blueAccent,
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                         )),
@@ -288,6 +289,7 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
                     child: Text("Cumulative Returns:",
                         textAlign: TextAlign.left,
                         style: GoogleFonts.roboto(
+                          color: Colors.blueAccent,
                           fontSize: 32,
                           fontWeight: FontWeight.w900,
                         )),
@@ -349,6 +351,7 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
                             textAlign: TextAlign.left,
                             style: GoogleFonts.roboto(
                               fontSize: 32,
+                              color: Colors.blueAccent,
                               fontWeight: FontWeight.w900,
                             )),
                         trailing: IconButton(
@@ -461,13 +464,13 @@ class _RlResultsScreenState extends State<RlResultsScreen> {
                                       .toStringAsFixed(3),
                                   "The Sortino Ratio takes an asset or portfolio's return and subtracts the risk-free rate, and then divides that amount by the asset's downside deviation.",
                                   metricDescFlag),
-                              _customVisibilityDivider(metricDescFlag),
-                              _projectionListTile(
-                                  "Tail Ratio",
-                                  _percentify(
-                                      decodedResults!.tailRatio.toDouble()),
-                                  "Tail risk is the chance of a loss occurring due to a rare event, as predicted by a probability distribution.",
-                                  metricDescFlag),
+                              // _customVisibilityDivider(metricDescFlag),
+                              // _projectionListTile(
+                              //     "Tail Ratio",
+                              //     _percentify(
+                              //         decodedResults!.tailRatio.toDouble()),
+                              //     "Tail risk is the chance of a loss occurring due to a rare event, as predicted by a probability distribution.",
+                              //     metricDescFlag),
                             ])),
                       )),
                 ),

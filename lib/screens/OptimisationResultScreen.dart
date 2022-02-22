@@ -146,6 +146,7 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
                       child: Text("Asset Weights:",
                           textAlign: TextAlign.left,
                           style: GoogleFonts.roboto(
+                            color: Colors.blueAccent,
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
                           )),
@@ -200,6 +201,7 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
                       child: Text("Weights in shares:",
                           textAlign: TextAlign.left,
                           style: GoogleFonts.roboto(
+                            color: Colors.blueAccent,
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
                           )),
@@ -253,6 +255,7 @@ class _OptimisationResultScreenState extends State<OptimisationResultScreen> {
                       child: Text("Projections:",
                           textAlign: TextAlign.left,
                           style: GoogleFonts.roboto(
+                            color: Colors.blueAccent,
                             fontSize: 32,
                             fontWeight: FontWeight.w900,
                           )),

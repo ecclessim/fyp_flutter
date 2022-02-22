@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:candlesticks/candlesticks.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:fyp_flutter/models/SimpleReturn.dart';
 import 'package:fyp_flutter/models/company_info_model.dart';
 import 'package:fyp_flutter/models/min_vol_model.dart';
 import 'package:fyp_flutter/models/model_status.dart';
@@ -12,10 +13,29 @@ import 'package:fyp_flutter/models/time_series_model.dart';
 import 'package:http/http.dart' as http;
 
 String ipAddressEmulator = 'http://10.0.2.2';
-// String ipAddressDevice = 'http://10.59.24.112';
+String ipAddressDevice = 'http://10.59.24.112';
 String portNumber = '5000';
 //NTU IP
-String ipAddressDevice = "http://10.27.162.67";
+// String ipAddressDevice = "http://10.27.162.67";
+
+class SimpleReturnsApi {
+  Future<SimpleReturn> getSimpleReturns(String principal, String tickers,
+      String weights, String startDate) async {
+    Map<String, String> params = {
+      'principal': principal,
+      'assets': tickers,
+      'weights': weights,
+      'startDate': startDate
+    };
+    final url = Uri.http("10.59.24.112:5000", '/calculate_returns', params);
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      return SimpleReturn.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Failed to load post');
+    }
+  }
+}
 
 class RLModelApi {
   Future<ModelStatus> trainModel(
