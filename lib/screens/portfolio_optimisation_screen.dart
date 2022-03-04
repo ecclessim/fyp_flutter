@@ -154,11 +154,12 @@ class _PortfolioOptimisationScreenState
   Future portfolioSelectionDialog(
       BuildContext context, String label, function) {
     print("$label, $function");
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return PortfolioOptSelectionScreen(
-              functionName: function, label: label);
-        });
+    return Navigator.of(context).push(MaterialPageRoute(builder: (context) => PortfolioOptSelectionScreen(functionName: function, label: label)));
+    // return showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return PortfolioOptSelectionScreen(
+    //           functionName: function, label: label);
+    //     });
   }
 }
