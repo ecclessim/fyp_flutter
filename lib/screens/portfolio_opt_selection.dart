@@ -160,13 +160,16 @@ class _PortfolioOptSelectionScreenState
   Future showOptimisationResultScreen(BuildContext context, String functionName,
       String portfolioName, String label) async {
     Navigator.of(context).pop();
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return OptimisationResultScreen(
-              functionName: functionName,
+    return Navigator.of(context).push(MaterialPageRoute(builder: (context) => OptimisationResultScreen(functionName: functionName,
               portfolioName: portfolioName,
-              label: label);
-        });
+              label: label)));
+    // return showDialog(
+    //     context: context,
+    //     builder: (BuildContext context) {
+    //       return OptimisationResultScreen(
+    //           functionName: functionName,
+    //           portfolioName: portfolioName,
+    //           label: label);
+    //     });
   }
 }

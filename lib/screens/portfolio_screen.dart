@@ -661,13 +661,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
   Future showStockRecordDialog(
       BuildContext context, String selectedPortfolio, String selectedTicker) {
-    return showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return StockRecordsScreen(
-              currentPortfolio: selectedPortfolio,
-              selectedTicker: selectedTicker);
-        });
+        return Navigator.of(context).push(MaterialPageRoute(builder: (context) => StockRecordsScreen(currentPortfolio: selectedPortfolio,
+              selectedTicker: selectedTicker)));
   }
 
   void showLoadingDialog(BuildContext context) {

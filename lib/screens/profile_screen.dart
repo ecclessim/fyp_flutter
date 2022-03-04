@@ -186,6 +186,9 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                     HelperMethods.showSnackBar(
                                         context, "Succesfully updated profile");
                                     Navigator.pop(context);
+                                    setState(() {
+                                      
+                                    });
                                   } else {
                                     HelperMethods.showSnackBar(
                                         context, "Failed to update profile");

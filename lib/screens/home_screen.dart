@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       String? imgUrl = prefs.getString("profile_image_${user!.uid}");
       if (imgUrl != null) {
+        print("loading profile image from cache.");
         return imgUrl;
       } else {
         await StorageRepo()
@@ -57,12 +58,13 @@ class _HomeScreenState extends State<HomeScreen> {
             .then((value) => setState(() {
                   prefs.setString("profile_image_${user!.uid}", value);
                   print("Cache not found: Setting avatar to $value");
-                  this.loggedInUser.avatarUrl = value;
+                  return value;
                 }));
       }
     } catch (e) {
       print(e);
     }
+    return null;
   }
 
   Future<void> _getPortfolioNames() async {
