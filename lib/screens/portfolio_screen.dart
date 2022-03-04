@@ -71,10 +71,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-            ),
-            Text(
-              "Showing all stocks in the portfolio.",
-              style: GoogleFonts.roboto(fontSize: 16),
             )
           ],
         ),
@@ -132,7 +128,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           onPressed: () async {
             await HelperMethods.showAddNewStockDialog(
                 context, null, widget.currentPortfolio);
-            _getUniqueTickersData();
+            await _getUniqueTickersData();
+            await _getPortfolioReturns();
           },
           child: Icon(Icons.add),
         ),
@@ -141,6 +138,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         child: RefreshIndicator(
           onRefresh: () async {
             await _getUniqueTickersData();
+            await _getPortfolioReturns();
           },
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
@@ -170,7 +168,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                       width: MediaQuery.of(context).size.width,
                       child: Padding(
                         padding: const EdgeInsets.only(left: 20, right: 20),
-                        child: Text("Your Stocks:",
+                        child: Text("Your stocks:",
                             textAlign: TextAlign.left,
                             style: GoogleFonts.roboto(
                               color: Colors.blueAccent,
@@ -361,10 +359,15 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                         fontWeight: FontWeight.bold,
                                       )),
                                   trailing: IconButton(
-                                    icon: Icon(
-                                      Icons.pie_chart_rounded,
-                                      color: Colors.blueAccent,
-                                    ),
+                                    icon: weightFlag
+                                        ? Icon(
+                                            Icons.pie_chart_rounded,
+                                            color: Colors.blueAccent,
+                                          )
+                                        : Icon(
+                                            Icons.format_list_bulleted_rounded,
+                                            color: Colors.blueAccent,
+                                          ),
                                     onPressed: () {
                                       setState(() {
                                         weightFlag = !weightFlag;
@@ -457,20 +460,23 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
       padding: const EdgeInsets.all(8.0),
       child: ListTile(
         dense: true,
-        leading: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
+        title: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             icon,
           ],
         ),
-        title: Text(
-          "$title",
-          style: GoogleFonts.roboto(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+        subtitle: Container(
+          width: 180,
+          child: Text(
+            "$title",
+            style: GoogleFonts.roboto(
+              fontSize: 16,
+              fontWeight: FontWeight.bold,
+            ),
+            textAlign: TextAlign.left,
           ),
-          textAlign: TextAlign.left,
         ),
         trailing: Text(
           "$subtitle",

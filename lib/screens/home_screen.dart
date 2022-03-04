@@ -34,27 +34,32 @@ class _HomeScreenState extends State<HomeScreen> {
       setState(() {
         this.loggedInUser = UserModel.fromMap(value.data());
         _loadSharedPreferences().then((value) {
+          print("Setting avatar to $value");
           this.loggedInUser.avatarUrl = value;
         });
       });
     });
     _getPortfolioNames();
+    setState(() {
+      print("Refreshing state");
+    });
   }
 
   Future<String?> _loadSharedPreferences() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      String? imgUrl = prefs.getString("profile_image");
+      String? imgUrl = prefs.getString("profile_image_${user!.uid}");
       if (imgUrl != null) {
         return imgUrl;
       } else {
         await StorageRepo()
             .getProfileImage(user?.uid)
             .then((value) => setState(() {
-                  loggedInUser.avatarUrl = value;
+                  prefs.setString("profile_image_${user!.uid}", value);
+                  print("Cache not found: Setting avatar to $value");
+                  this.loggedInUser.avatarUrl = value;
                 }));
       }
-      return null;
     } catch (e) {
       print(e);
     }
@@ -239,7 +244,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         portfolios[index]['portfolioName'],
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.roboto(
-                                          fontSize: 28,
+                                          fontSize: 20,
                                           fontWeight: FontWeight.bold,
                                           color: Colors.white,
                                         ),
@@ -248,7 +253,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         "Total: \$${HelperMethods.numberCommafy(HelperMethods.centsToDollars(portfolios[index]['portfolioValue'].round()).toString())}",
                                         overflow: TextOverflow.ellipsis,
                                         style: GoogleFonts.roboto(
-                                          fontSize: 20,
+                                          fontSize: 12,
                                           color: Colors.white70,
                                         ),
                                       ),

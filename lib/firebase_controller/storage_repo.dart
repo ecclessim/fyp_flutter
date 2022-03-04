@@ -21,14 +21,12 @@ class StorageRepo {
 
   Future<dynamic> getProfileImage(uid) async {
     try {
-      SharedPreferences prefs = await SharedPreferences.getInstance();
       String url = "";
       await storage
           .ref('profile_images/$uid')
           .getDownloadURL()
           .then((value) => url = value.toString());
       print("Retrieved image: $url");
-      prefs.setString("profile_image", url);
       return url;
     } on FirebaseException catch (e) {
       print("Exception: $e");

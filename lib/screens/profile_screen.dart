@@ -20,7 +20,7 @@ class ProfileScreen extends StatefulWidget {
 class _ProfileScreenState extends State<ProfileScreen> {
   User? user = FirebaseAuth.instance.currentUser;
   UserModel loggedInUser = UserModel();
-
+  final _formkey = GlobalKey<FormState>();
   TextEditingController _usernameController = new TextEditingController();
   TextEditingController _oldPasswordController = new TextEditingController();
   TextEditingController _newPasswordController = new TextEditingController();
@@ -29,15 +29,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   void initState() {
-    super.initState();
-
     var userImage = StorageRepo().getProfileImage(user?.uid);
     userImage.then((value) {
       setState(() {
         loggedInUser.avatarUrl = value;
       });
     });
-
+    super.initState();
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -53,123 +51,129 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final _formkey = GlobalKey<FormState>();
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.blueAccent,
         //no shadow on appbar
         elevation: 0,
       ),
-      resizeToAvoidBottomInset: false,
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: <Widget>[
-          Expanded(
-            child: Container(
-              decoration: BoxDecoration(
-                color: Colors.blueAccent,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20),
-                ),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(top: 0.0),
-                    child: Avatar(
-                      avatarUrl: loggedInUser.avatarUrl,
-                      onTap: () async {
-                        var image = await ImagePicker()
-                            .pickImage(source: ImageSource.gallery);
-                        if (image != null) {
-                          print(image.path);
-                          String profileImgUrl = await StorageRepo()
-                              .uploadProfileImage(File(image.path), user!.uid);
-                          setState(() {
-                            loggedInUser.avatarUrl = profileImgUrl;
-                          });
-                          HelperMethods.showSnackBar(
-                              context, "Succesfully uploaded profile picture");
-                        }
-                      },
-                    ),
-                  ),
-                  Text(
-                    "Settings",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.roboto(
-                      color: Colors.white,
-                      fontSize: 30,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+      // resizeToAvoidBottomInset: false,
+      body: SingleChildScrollView(
+        // physics: NeverScrollableScrollPhysics(),
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            minHeight: MediaQuery.of(context).size.height,
+            minWidth: MediaQuery.of(context).size.width,
           ),
-          Expanded(
-              flex: 2,
-              child: Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Column(
-                  children: <Widget>[
-                    TextFormField(
-                      decoration: InputDecoration(hintText: "Username"),
-                      controller: _usernameController,
+          child: IntrinsicHeight(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: <Widget>[
+                Container(
+                  height: 200,
+                  decoration: BoxDecoration(
+                    color: Colors.blueAccent,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(20),
+                      bottomRight: Radius.circular(20),
                     ),
-                    SizedBox(height: 20.0),
-                    Expanded(
-                      child: Form(
-                        key: _formkey,
-                        child: Column(
-                          children: <Widget>[
-                            Text(
-                              "Manage Password",
-                              textAlign: TextAlign.center,
-                              style: GoogleFonts.poppins(
-                                fontWeight: FontWeight.w500,
-                              ),
-                            ),
-                            TextFormField(
-                              obscureText: true,
-                              decoration:
-                                  InputDecoration(hintText: "Current Password"),
-                              controller: _oldPasswordController,
-                            ),
-                            TextFormField(
-                              obscureText: true,
-                              decoration:
-                                  InputDecoration(hintText: "New Password"),
-                              controller: _newPasswordController,
-                            ),
-                            TextFormField(
-                              obscureText: true,
-                              decoration:
-                                  InputDecoration(hintText: "Confirm Password"),
-                              controller: _confirmPasswordController,
-                              validator: (value) {
-                                if (value != _newPasswordController.text) {
-                                  return "Passwords do not match";
-                                }
-                                return null;
-                              },
-                            )
-                          ],
+                  ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: <Widget>[
+                      Padding(
+                        padding: const EdgeInsets.only(top: 0.0),
+                        child: Avatar(
+                          avatarUrl: loggedInUser.avatarUrl,
+                          onTap: () async {
+                            var image = await ImagePicker()
+                                .pickImage(source: ImageSource.gallery);
+                            if (image != null) {
+                              print(image.path);
+                              String profileImgUrl = await StorageRepo()
+                                  .uploadProfileImage(
+                                      File(image.path), user!.uid);
+                              setState(() {
+                                loggedInUser.avatarUrl = profileImgUrl;
+                              });
+                              HelperMethods.showSnackBar(context,
+                                  "Succesfully uploaded profile picture");
+                            }
+                          },
                         ),
                       ),
-                    ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (_formkey.currentState!.validate()) {
-                              bool updateProfile =
-                                  await FireStoreRepo()
+                      Text(
+                        "Settings",
+                        textAlign: TextAlign.center,
+                        style: GoogleFonts.roboto(
+                          color: Colors.white,
+                          fontSize: 30,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Expanded(
+                    child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    children: <Widget>[
+                      TextFormField(
+                        decoration: InputDecoration(hintText: "Username"),
+                        controller: _usernameController,
+                      ),
+                      SizedBox(height: 20.0),
+                      Expanded(
+                        child: Form(
+                          key: _formkey,
+                          child: Column(
+                            children: <Widget>[
+                              Text(
+                                "Manage Password",
+                                textAlign: TextAlign.center,
+                                style: GoogleFonts.poppins(
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                              TextFormField(
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    hintText: "Current Password"),
+                                controller: _oldPasswordController,
+                              ),
+                              TextFormField(
+                                obscureText: true,
+                                decoration:
+                                    InputDecoration(hintText: "New Password"),
+                                controller: _newPasswordController,
+                              ),
+                              TextFormField(
+                                obscureText: true,
+                                decoration: InputDecoration(
+                                    hintText: "Confirm Password"),
+                                controller: _confirmPasswordController,
+                                validator: (value) {
+                                  if (value != _newPasswordController.text) {
+                                    return "Passwords do not match";
+                                  }
+                                  return null;
+                                },
+                              )
+                            ],
+                          ),
+                        ),
+                      ),
+                      Expanded(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (_formkey.currentState!.validate()) {
+                                  bool updateProfile = await FireStoreRepo()
                                       .updateUser(
-                                          _usernameController.text
+                                          _usernameController
+                                              .text
                                               .trimLeft()
                                               .trimRight(),
                                           _oldPasswordController.text
@@ -178,32 +182,36 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                           _newPasswordController.text
                                               .trimLeft()
                                               .trimRight());
-                              if (updateProfile) {
-                                HelperMethods.showSnackBar(
-                                    context, "Succesfully updated profile");
+                                  if (updateProfile) {
+                                    HelperMethods.showSnackBar(
+                                        context, "Succesfully updated profile");
+                                    Navigator.pop(context);
+                                  } else {
+                                    HelperMethods.showSnackBar(
+                                        context, "Failed to update profile");
+                                  }
+                                }
+                              },
+                              child: Text("Save Profile"),
+                            ),
+                            SizedBox(width: 20.0),
+                            ElevatedButton(
+                              onPressed: () {
+                                FirebaseController.logOut(context);
                                 Navigator.pop(context);
-                              } else {
-                                HelperMethods.showSnackBar(
-                                    context, "Failed to update profile");
-                              }
-                            }
-                          },
-                          child: Text("Save Profile"),
+                              },
+                              child: Text("Log Out"),
+                            )
+                          ],
                         ),
-                        SizedBox(width: 20.0),
-                        ElevatedButton(
-                          onPressed: () {
-                            FirebaseController.logOut(context);
-                            Navigator.pop(context);
-                          },
-                          child: Text("Log Out"),
-                        )
-                      ],
-                    ),
-                  ],
-                ),
-              ))
-        ],
+                      ),
+                    ],
+                  ),
+                ))
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

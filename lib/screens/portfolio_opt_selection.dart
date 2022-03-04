@@ -126,7 +126,7 @@ class _PortfolioOptSelectionScreenState
                                           portfolios[index]['portfolioName'],
                                           overflow: TextOverflow.ellipsis,
                                           style: GoogleFonts.roboto(
-                                            fontSize: 26,
+                                            fontSize: 20,
                                             fontWeight: FontWeight.bold,
                                             color: Colors.white,
                                           ),
