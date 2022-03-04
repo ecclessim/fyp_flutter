@@ -128,7 +128,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
           onPressed: () async {
             await HelperMethods.showAddNewStockDialog(
                 context, null, widget.currentPortfolio);
-            _getUniqueTickersData();
+            await _getUniqueTickersData();
+            await _getPortfolioReturns();
           },
           child: Icon(Icons.add),
         ),
@@ -137,6 +138,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         child: RefreshIndicator(
           onRefresh: () async {
             await _getUniqueTickersData();
+            await _getPortfolioReturns();
           },
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
