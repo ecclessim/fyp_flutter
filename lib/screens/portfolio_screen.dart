@@ -47,7 +47,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     super.initState();
     _getUniqueTickersData();
     _loadPreferences();
-    _getPortfolioReturns();
+    // _getPortfolioReturns();
   }
 
   @override
@@ -129,7 +129,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
             await HelperMethods.showAddNewStockDialog(
                 context, null, widget.currentPortfolio);
             await _getUniqueTickersData();
-            await _getPortfolioReturns();
+            // await _getPortfolioReturns();
           },
           child: Icon(Icons.add),
         ),
@@ -138,7 +138,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
         child: RefreshIndicator(
           onRefresh: () async {
             await _getUniqueTickersData();
-            await _getPortfolioReturns();
+            // await _getPortfolioReturns();
           },
           child: SingleChildScrollView(
             physics: AlwaysScrollableScrollPhysics(),
@@ -492,7 +492,12 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   }
 
   Future<void> _getPortfolioReturns() async {
-    print("getting portfolio returns");
+    print(
+        "_getPortfolioReturns: => getting portfolio returns ${stocks.length}");
+    if (stocks.length < 2) {
+      returnsLoadedFlag = false;
+      return;
+    }
     var simpleReturnsAPI = new SimpleReturnsApi();
     String portfolioDate =
         await FireStoreRepo().getPortfolioDate(widget.currentPortfolio);
@@ -545,7 +550,17 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                     });
                   }),
                 }
-            });
+              else
+                {
+                  setState(() {
+                    stocks = [];
+                    HelperMethods.showSnackBar(context, "No Stocks");
+                  })
+                }
+            })
+        .then((value) => setState(() {
+              _getPortfolioReturns();
+            }));
   }
 
   _loadPreferences() async {
@@ -661,8 +676,16 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
 
   Future showStockRecordDialog(
       BuildContext context, String selectedPortfolio, String selectedTicker) {
-        return Navigator.of(context).push(MaterialPageRoute(builder: (context) => StockRecordsScreen(currentPortfolio: selectedPortfolio,
-              selectedTicker: selectedTicker)));
+    return Navigator.of(context)
+        .push(MaterialPageRoute(
+            builder: (context) => StockRecordsScreen(
+                currentPortfolio: selectedPortfolio,
+                selectedTicker: selectedTicker)))
+        .then((value) => setState((() {
+              _getUniqueTickersData();
+              _loadPreferences();
+              // _getPortfolioReturns();
+            })));
   }
 
   void showLoadingDialog(BuildContext context) {

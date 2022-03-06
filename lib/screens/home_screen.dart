@@ -24,8 +24,11 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> portfolios = [];
   @override
   void initState() {
-    
+    _loadFirebaseUser();
+    super.initState();
+  }
 
+  Future _loadFirebaseUser() async {
     FirebaseFirestore.instance
         .collection("users")
         .doc(user!.uid)
@@ -40,7 +43,6 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       print("Refreshing state");
     });
-    super.initState();
   }
 
   Future<void> _loadSharedPreferences() async {
@@ -51,7 +53,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (imgUrl != null) {
         print("loading profile image from cache.");
         setState(() {
-            this.loggedInUser.avatarUrl = imgUrl;  
+          this.loggedInUser.avatarUrl = imgUrl;
         });
       } else {
         await StorageRepo()
@@ -104,7 +106,9 @@ class _HomeScreenState extends State<HomeScreen> {
                 MaterialPageRoute(
                   builder: (context) => ProfileScreen(),
                 ),
-              );
+              ).then((value) => setState(() {
+                    _loadFirebaseUser();
+                  }));
             },
           ),
           title: Column(
@@ -273,7 +277,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           portfolios[index][
                                                               'portfolioValue'],
                                                       uid: loggedInUser.uid,
-                                                    )));
+                                                    ))).then(
+                                            (value) => setState(() {
+                                                  _getPortfolioNames();
+                                                }));
                                       },
                                     ),
                                   ),
