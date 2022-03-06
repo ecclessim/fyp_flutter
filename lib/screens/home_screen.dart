@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
   List<dynamic> portfolios = [];
   @override
   void initState() {
-    super.initState();
+    
 
     FirebaseFirestore.instance
         .collection("users")
@@ -33,32 +33,33 @@ class _HomeScreenState extends State<HomeScreen> {
         .then((value) {
       setState(() {
         this.loggedInUser = UserModel.fromMap(value.data());
-        _loadSharedPreferences().then((value) {
-          print("Setting avatar to $value");
-          this.loggedInUser.avatarUrl = value;
-        });
+        _loadSharedPreferences();
       });
     });
     _getPortfolioNames();
     setState(() {
       print("Refreshing state");
     });
+    super.initState();
   }
 
-  Future<String?> _loadSharedPreferences() async {
+  Future<void> _loadSharedPreferences() async {
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
+      // await prefs.clear();
       String? imgUrl = prefs.getString("profile_image_${user!.uid}");
       if (imgUrl != null) {
         print("loading profile image from cache.");
-        return imgUrl;
+        setState(() {
+            this.loggedInUser.avatarUrl = imgUrl;  
+        });
       } else {
         await StorageRepo()
             .getProfileImage(user?.uid)
             .then((value) => setState(() {
                   prefs.setString("profile_image_${user!.uid}", value);
                   print("Cache not found: Setting avatar to $value");
-                  return value;
+                  this.loggedInUser.avatarUrl = value;
                 }));
       }
     } catch (e) {
