@@ -4,6 +4,7 @@ import 'package:candlesticks/candlesticks.dart';
 
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:fyp_flutter/models/SimpleReturn.dart';
+import 'package:fyp_flutter/models/StockExist.dart';
 import 'package:fyp_flutter/models/company_info_model.dart';
 import 'package:fyp_flutter/models/min_vol_model.dart';
 import 'package:fyp_flutter/models/model_status.dart';
@@ -86,6 +87,18 @@ class RLModelApi {
 }
 
 class CompanyInfoApi {
+  Future<StockExist> getStockExist(String ticker) async {
+    final url = "$ipAddressDevice:$portNumber/check_stock_exist?ticker=$ticker";
+    print(url);
+    final response = await http
+        .get(Uri.parse(url), headers: {"Content-type": "application/json"});
+    if (response.statusCode == 200) {
+      return StockExist.fromJson(json.decode(response.body));
+    } else {
+      throw Exception('Something went wrong. Please try again later.');
+    }
+  }
+
   Future<CompanyInfo> getCompanyInfo(ticker) async {
     // Device URL -> ipconfig, use PC IP
     final url = "$ipAddressDevice:5000/get_company_info?ticker=$ticker";

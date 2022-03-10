@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fyp_flutter/firebase_controller/firestore_repo.dart';
 import 'package:fyp_flutter/helper_screen/helper_methods.dart';
+import 'package:fyp_flutter/webservices/web_services.dart';
 import 'package:intl/intl.dart';
 
 class NewStockScreen extends StatefulWidget {
@@ -145,20 +146,28 @@ class _NewStockScreenState extends State<NewStockScreen> {
                         onPressed: () async {
                           if (_formKey.currentState!.validate()) {
                             // If the form is valid, display a Snackbar.
-                            bool uploadSuccess = await FireStoreRepo()
-                                .addStockToPortfolio(
-                                    widget.selectedPortfolio,
-                                    _tickerController.text.toUpperCase(),
-                                    double.parse(_purchasePriceController.text),
-                                    int.parse(_quantityController.text),
-                                    _purchaseDateController.text);
-                            if (uploadSuccess) {
-                              HelperMethods.showSnackBar(context,
-                                  "Stock added: ${_tickerController.text}");
-                              Navigator.of(context).pop();
+                            if (await checkStockExist(
+                                    _tickerController.text.trim()) ==
+                                true) {
+                              bool uploadSuccess = await FireStoreRepo()
+                                  .addStockToPortfolio(
+                                      widget.selectedPortfolio,
+                                      _tickerController.text.toUpperCase(),
+                                      double.parse(
+                                          _purchasePriceController.text),
+                                      int.parse(_quantityController.text),
+                                      _purchaseDateController.text);
+                              if (uploadSuccess) {
+                                HelperMethods.showSnackBar(context,
+                                    "Stock added: ${_tickerController.text}");
+                                Navigator.of(context).pop();
+                              } else {
+                                HelperMethods.showSnackBar(
+                                    context, "Error adding stock...");
+                              }
                             } else {
                               HelperMethods.showSnackBar(
-                                  context, "Error adding stock...");
+                                  context, "Stock does not exist...");
                             }
                           }
                         },
@@ -175,6 +184,13 @@ class _NewStockScreenState extends State<NewStockScreen> {
   }
 
   DateTime selectedDate = DateTime.now();
+
+  Future<bool> checkStockExist(ticker) async {
+    bool stockExist = false;
+    var api = new CompanyInfoApi();
+    await api.getStockExist(ticker).then((value) => {stockExist = value.exist});
+    return stockExist;
+  }
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(

@@ -37,6 +37,8 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   String? cachedModelValue;
   String? cachedModelResponse;
   String uniqueTickers = "";
+
+  num pfValue = 0;
   num cumulativeReturn = 0;
   num portfolioVariance = 0;
   num portfolioVolatilty = 0;
@@ -44,10 +46,10 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   num portfolioDollarReturn = 0;
   @override
   void initState() {
-    super.initState();
     _getUniqueTickersData();
     _loadPreferences();
     // _getPortfolioReturns();
+    super.initState();
   }
 
   @override
@@ -323,6 +325,11 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                             child: Column(
                               children: [
                                 _simpleReturnTile(
+                                  Icon(Icons.money_rounded),
+                                  "Total Portfolio Value",
+                                  "\$${HelperMethods.numberCommafy((pfValue.round()).toString())}",
+                                ),
+                                _simpleReturnTile(
                                   Icon(Icons.assessment_rounded),
                                   "Cumulative Return",
                                   "${cumulativeReturn.toStringAsFixed(2)}%",
@@ -333,7 +340,7 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
                                   "${(portfolioReturn * 100).toStringAsFixed(2)}%",
                                 ),
                                 _simpleReturnTile(
-                                  Icon(Icons.show_chart_rounded),
+                                  Icon(Icons.waterfall_chart_rounded),
                                   "Volatility",
                                   "${(portfolioVolatilty * 100).toStringAsFixed(2)}%",
                                 ),
@@ -531,7 +538,13 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
   Future<void> _getUniqueTickersData() async {
     String tickerString = "";
     var dailyStockAPI = new DailyStockApi();
-
+    await FireStoreRepo()
+        .getPortfolioValue(widget.currentPortfolio)
+        .then((value) {
+      setState(() {
+        pfValue = value;
+      });
+    });
     await FireStoreRepo()
         .getUniqueStockTicker(widget.currentPortfolio)
         .then((value) async => {
@@ -584,7 +597,6 @@ class _PortfolioScreenState extends State<PortfolioScreen> {
     // case where shared_preferences is empty or > 1 day old : regenerate analysis
     // case where shared_preferences data exists and is < 1 day old : use data from shared_preferences
 
-    double pfValue = await FireStoreRepo().getPortfolioValue(portfolioName);
     int convertedPfValue = pfValue.round();
     bool isPfValueSame = false;
     bool cachedTimeDifference = false;
