@@ -24,3 +24,7 @@ MomoManager - A portfolio allocation app using DRL-FinRL and PyPfOpt to perform 
 - Open the flutter directory in VSCode
 - Ensure that an android virtual device with SDK 29 is created
 - Run the application.
+
+![alt text](https://github.com/ecclessim/fyp_flutter/blob/main/search%20and%20add.png)
+![alt text](https://github.com/ecclessim/fyp_flutter/blob/main/projections.png)
+![alt text](https://github.com/ecclessim/fyp_flutter/blob/main/portfolio.png)
